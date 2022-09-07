@@ -130,7 +130,7 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 
                 args["filename"] = "cover.jpg"
                 args["bytefile"] = bytes2jpeg(cover_bytes)
-            replies.add(**args, quote=message)
+            replies.add(**args)
         except Exception as ex:
             bot.logger.exception(ex)
             replies.add(text=f"❌ Error: {ex}", quote=message)
@@ -155,7 +155,6 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
                 text=f"{chapter.name}\n{chapter.url}",
                 filename="chapter.pdf",
                 bytefile=pdf,
-                quote=message,
             )
         except Exception as ex:
             bot.logger.exception(ex)
