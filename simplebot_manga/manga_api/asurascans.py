@@ -30,7 +30,6 @@ class AsuraScans(Site):
 
         for anchor in anchors:
             yield Manga(
-                self,
                 url=anchor["href"],
                 name=anchor["title"],
                 cover=anchor.findNext("img").get("src"),
@@ -45,7 +44,7 @@ class AsuraScans(Site):
         ]
         for anchor in anchors:
             title = anchor.findChild("span", {"class": "chapternum"}).string.strip()
-            yield Chapter(self, url=anchor["href"], name=title)
+            yield Chapter(url=anchor["href"], name=title)
 
     def get_images(self, chapter: Chapter) -> Iterable[ChapterImage]:
         with self.session.get(chapter.url) as resp:
@@ -53,4 +52,4 @@ class AsuraScans(Site):
             soup = BeautifulSoup(resp.text, "html.parser")
         soup = soup.find("div", {"id": "readerarea"})
         for tag in soup("p"):
-            yield ChapterImage(self, url=tag.findNext("img")["src"])
+            yield ChapterImage(url=tag.findNext("img")["src"])

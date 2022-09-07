@@ -30,38 +30,21 @@ class Language(Enum):
 
 
 class Manga:
-    def __init__(
-        self, site: "Site", url: str, name: str = "", cover: str = None
-    ) -> None:
-        self.site = site
+    def __init__(self, url: str, name: str = "", cover: str = None) -> None:
+        self.url = url
         self.name = name
         self.cover = cover
-        self.url = url
-
-    def get_chapters(self) -> Iterable["Chapter"]:
-        return self.site.get_chapters(self)
-
-    def download_cover(self) -> bytes:
-        return self.site.download_cover(self)
 
 
 class Chapter:
-    def __init__(self, site: "Site", url: str, name: str = "") -> None:
-        self.site = site
+    def __init__(self, url: str, name: str = "") -> None:
         self.name = name
         self.url = url
 
-    def get_images(self) -> Iterable["ChapterImage"]:
-        return self.site.get_images(self)
-
 
 class ChapterImage:
-    def __init__(self, site: "Site", url: str) -> None:
-        self.site = site
+    def __init__(self, url: str) -> None:
         self.url = url
-
-    def download(self) -> bytes:
-        return self.site.download_image(self)
 
 
 class Site(ABC):

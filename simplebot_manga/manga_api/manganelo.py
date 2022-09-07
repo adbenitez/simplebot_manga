@@ -28,7 +28,6 @@ class Manganelo(Site):
         for card in soup("div", {"class": "search-story-item"}):
             anchor = card.findNext("a")
             yield Manga(
-                self,
                 url=f'{self.url}/{anchor["href"][1:]}',
                 name=anchor["title"],
                 cover=f'{self.url}/{anchor.findNext("img")["src"][1:]}',
@@ -40,7 +39,7 @@ class Manganelo(Site):
             soup = BeautifulSoup(resp.text, "html.parser")
         for item in soup("li", {"class": "a-h"}):
             item = item.findNext("a")
-            yield Chapter(self, name=item.string, url=f'{self.url}/{item["href"][1:]}')
+            yield Chapter(name=item.string, url=f'{self.url}/{item["href"][1:]}')
 
     def get_images(self, chapter: Chapter) -> Iterable[ChapterImage]:
         with self.session.get(chapter.url) as resp:
@@ -48,4 +47,4 @@ class Manganelo(Site):
             soup = BeautifulSoup(resp.text, "html.parser")
         soup = soup.find("div", {"class": "container-chapter-reader"})
         for img in soup("img"):
-            yield ChapterImage(self, url=quote(img["data-src"].strip(), safe=":/%"))
+            yield ChapterImage(url=quote(img["data-src"].strip(), safe=":/%"))

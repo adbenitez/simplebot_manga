@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import Iterable
+from typing import Iterable, List
 from urllib.parse import quote_plus
 
 import simplebot
@@ -11,7 +11,7 @@ from deltachat import Message
 from simplebot.bot import DeltaBot, Replies
 
 from .manga_api import get_site, lang2sites
-from .manga_api.base import Chapter, Language, Manga
+from .manga_api.base import Chapter, Language, Manga, Site
 from .templates import get_template
 from .util import bytes2jpeg, images2pdf
 
@@ -105,18 +105,15 @@ def search(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> N
 def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Get the info and chapters list for the given manga."""
     try:
-        manga = _get_manga(payload)
+        site = get_site(payload)
+        assert site
+        manga = cache.get(payload)
+        if not manga:  # fallback to basic object with missing metadata
+            manga = Manga(url=payload)
 
         args: dict = {}
         try:
-            chapters_key = f"chaps|{manga.url}"
-            chapters = cache.get(chapters_key)
-            if not chapters:
-                chapters = list(manga.get_chapters())
-                cache.set(chapters_key, chapters, timeout=60 * 60)
-                for chapter in chapters:
-                    cache.set(chapter.url, chapter)
-
+            chapters = _get_chapters(site, manga)
             if chapters:
                 args["html"] = get_template("chapter_list.j2").render(
                     bot_addr=bot.self_contact.addr,
@@ -128,7 +125,7 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
             if manga.cover:
                 cover_bytes = blobs_cache.get(manga.cover)
                 if not cover_bytes:
-                    cover_bytes = manga.download_cover()
+                    cover_bytes = site.download_cover(manga)
                     blobs_cache.set(manga.cover, cover_bytes)
 
                 args["filename"] = "cover.jpg"
@@ -146,14 +143,14 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
     try:
+        site = get_site(payload)
+        assert site
         chapter = cache.get(payload)
         if not chapter:  # fallback to basic object with missing metadata
-            site = get_site(payload)
-            assert site
-            chapter = Chapter(site, url=payload)
+            chapter = Chapter(url=payload)
 
         try:
-            pdf = images2pdf(_get_images(chapter), chapter.name or chapter.url)
+            pdf = images2pdf(_get_images(site, chapter), chapter.name or chapter.url)
             replies.add(
                 text=f"{chapter.name}\n{chapter.url}",
                 filename="chapter.pdf",
@@ -168,26 +165,28 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
         replies.add(text="❌ Wrong usage", quote=message)
 
 
-def _get_images(chapter) -> Iterable[bytes]:
+def _get_images(site: Site, chapter: Chapter) -> Iterable[bytes]:
     imgs_key = f"imgs|{chapter.url}"
     imgs = cache.get(imgs_key)
     if not imgs:
-        imgs = list(chapter.get_images())
+        imgs = list(site.get_images(chapter))
         cache.set(imgs_key, imgs, timeout=60 * 60)
 
     for img in imgs:
         img_bytes = blobs_cache.get(img.url)
         if not img_bytes:
-            img_bytes = img.download()
+            img_bytes = site.download_image(img)
             blobs_cache.set(img.url, img_bytes)
             time.sleep(0.1)
         yield img_bytes
 
 
-def _get_manga(url: str) -> Manga:
-    manga = cache.get(url)
-    if not manga:  # fallback to basic object with missing metadata
-        site = get_site(url)
-        assert site
-        manga = Manga(site, url=url)
-    return manga
+def _get_chapters(site: Site, manga: Manga) -> List[Chapter]:
+    chapters_key = f"chaps|{manga.url}"
+    chapters = cache.get(chapters_key)
+    if not chapters:
+        chapters = list(site.get_chapters(manga))
+        cache.set(chapters_key, chapters, timeout=60 * 60)
+        for chapter in chapters:
+            cache.set(chapter.url, chapter)
+    return chapters

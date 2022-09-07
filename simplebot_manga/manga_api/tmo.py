@@ -8,6 +8,12 @@ from bs4 import BeautifulSoup
 from .base import Chapter, ChapterImage, Language, Manga, Site
 
 
+class TMOChapterImage(ChapterImage):
+    def __init__(self, chapter_url: str, url: str) -> None:
+        super().__init__(url)
+        self.chapter_url = chapter_url
+
+
 class TuMangaOnline(Site):
     @property
     def name(self) -> str:
@@ -32,7 +38,6 @@ class TuMangaOnline(Site):
                 card.findNext("div", {"class": "thumbnail-title"}).h4["title"].strip()
             )
             yield Manga(
-                self,
                 name=name,
                 url=card.a["href"].strip(),
                 cover=str(card.style).split("url('")[1].split("')")[0].strip(),
@@ -50,7 +55,7 @@ class TuMangaOnline(Site):
                 .get("href")
                 .strip()
             )
-            yield Chapter(self, name=name, url=url)
+            yield Chapter(name=name, url=url)
 
     def get_images(self, chapter: Chapter) -> Iterable[ChapterImage]:
         with self.session.get(chapter.url) as resp:
@@ -65,11 +70,13 @@ class TuMangaOnline(Site):
 
         soup = soup.find("div", {"class": "viewer-container container"})
         for img in soup("img"):
-            yield ChapterImage(self, url=quote(img["data-src"].strip(), safe=":/%"))
+            yield TMOChapterImage(
+                chapter.url, url=quote(img["data-src"].strip(), safe=":/%")
+            )
 
     def download_image(self, image: ChapterImage) -> bytes:
         with self.session.get(
-            image.url, headers={"referer": image.chapter.url}
+            image.url, headers={"referer": image.chapter_url}  # noqa
         ) as resp:
             resp.raise_for_status()
             return resp.content

@@ -53,7 +53,6 @@ class NineManga(Site):
                 anchor = card.find("a", class_="bookname")
                 img = card.find("img")
                 yield Manga(
-                    self,
                     name=_get_text(anchor),
                     url=anchor["href"],
                     cover=img.get("src") if img else None,
@@ -70,7 +69,7 @@ class NineManga(Site):
                 soup = BeautifulSoup(resp.text, "html.parser")
         tag = soup.find("div", class_="silde")
         for anchor in tag.find_all("a", class_="chapter_list_a"):
-            yield Chapter(self, name=anchor["title"], url=anchor["href"])
+            yield Chapter(name=anchor["title"], url=anchor["href"])
 
     def get_images(self, chapter: Chapter) -> Iterable[ChapterImage]:
         with self.session.get(chapter.url) as resp:
@@ -79,7 +78,7 @@ class NineManga(Site):
         tag = soup.find("select", id="page")
         site_url = chapter.url[: chapter.url.find("/", 8)]
         for opt in tag.find_all("option"):
-            yield ChapterImage(self, url=f'{site_url}{opt["value"]}')
+            yield ChapterImage(url=f'{site_url}{opt["value"]}')
 
     def download_image(self, image: ChapterImage) -> bytes:
         with self.session.get(
