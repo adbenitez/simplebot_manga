@@ -21,7 +21,7 @@ blobs_cache: FileSystemCache = None  # noqa
 
 @simplebot.hookimpl
 def deltabot_init(bot: DeltaBot) -> None:
-    getdefault(bot, "attachment_max_size", str(1024 * 15))
+    getdefault(bot, "attachment_max_size", str(1024**2 * 15))
 
 
 @simplebot.hookimpl
@@ -176,6 +176,9 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
                 size += len(img_bytes)
                 if size > max_size:
                     part += 1
+                    if not imgs:
+                        # add at least one image even if it is bigger than max_size
+                        imgs.append(img_bytes)
                     send_pdf(imgs, part)
                     imgs, size = [], 0
                 imgs.append(img_bytes)
