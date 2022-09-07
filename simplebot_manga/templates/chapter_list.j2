@@ -1,0 +1,9 @@
+{% extends "base.j2" %}
+{% block content %}
+    <h2>{{ manga_name }}</h2>
+    {% for chapter in chapters %}
+        <a href="mailto:{{ bot_addr }}?body=/download%20{{ quote_plus(chapter.url) }}">
+	    <div class="card">{{ chapter.name }}</div>
+        </a>
+    {% endfor %}    
+{% endblock %}

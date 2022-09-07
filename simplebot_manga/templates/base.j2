@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+         html,
+         body {
+             margin: 0;
+             padding: 0;
+             font-family: sans-serif;
+             font-size: 1.1em;
+             background: linear-gradient(#fff 0%, #FFFFED 100%)
+         }
+         a {
+             color: black;
+             text-decoration: none;
+         }
+         .screen {
+             display: flex;
+             flex-direction: column;
+             width: 100vw;
+             height: 100vh;
+         }
+         .content {
+             overflow-y: auto;
+             width: 97vw;
+             max-width: 550px;
+             margin: auto;
+         }
+         .card {
+             display: flex;
+             background-color: #eee;
+             margin: 1em;
+             padding: 1em;
+             border-radius: 1em;
+         }
+         .card:hover {
+             background-color: #ddd;
+         }
+         .screen h2 {
+             text-align: center;
+             color: #888;
+         }
+         .screen .content {
+             flex-grow: 1;
+         }
+        </style>
+    </head>
+    <body>
+        <div class="screen">
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

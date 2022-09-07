@@ -1,0 +1,11 @@
+{% extends "base.j2" %}
+{% block content %}
+    {% for lang in lang2sites.keys() %}
+        <h2>{{ lang.value }}</h2>
+        {% for site in lang2sites[lang] %}
+            <a href="mailto:{{ bot_addr }}?body=/search%20{{ lang.name }}%20{{ quote_plus(site.url) }}%20{{ quote_plus(query) }}">
+                <div class="card">{{ site.name }}</div>
+            </a>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

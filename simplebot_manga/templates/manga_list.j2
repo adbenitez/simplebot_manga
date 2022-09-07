@@ -1,0 +1,9 @@
+{% extends "base.j2" %}
+{% block content %}
+    <h2>{{ site_name }}</h2>
+    {% for manga in mangas %}
+        <a href="mailto:{{ bot_addr }}?body=/info%20{{ quote_plus(manga.url) }}">
+	    <div class="card">{{ manga.name }}</div>
+        </a>
+    {% endfor %}    
+{% endblock %}
