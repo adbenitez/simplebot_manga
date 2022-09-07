@@ -39,7 +39,9 @@ class Manganelo(Site):
             soup = BeautifulSoup(resp.text, "html.parser")
         for item in soup("li", {"class": "a-h"}):
             item = item.findNext("a")
-            yield Chapter(name=item.string, url=f'{self.url}/{item["href"][1:]}')
+            yield Chapter(
+                name=item.string.strip(), url=f'{self.url}/{item["href"][1:]}'
+            )
 
     def get_images(self, chapter: Chapter) -> Iterable[ChapterImage]:
         with self.session.get(chapter.url) as resp:
