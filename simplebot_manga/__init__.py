@@ -13,10 +13,15 @@ from simplebot.bot import DeltaBot, Replies
 from .manga_api import get_site, lang2sites
 from .manga_api.base import Chapter, Language, Manga, Site
 from .templates import get_template
-from .util import bytes2jpeg, images2pdf
+from .util import bytes2jpeg, getdefault, images2pdf
 
 cache: FileSystemCache = None  # noqa
 blobs_cache: FileSystemCache = None  # noqa
+
+
+@simplebot.hookimpl
+def deltabot_init(bot: DeltaBot) -> None:
+    getdefault(bot, "attachment_max_size", str(1024 * 15))
 
 
 @simplebot.hookimpl
@@ -142,6 +147,19 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 @simplebot.command
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
+
+    def send_pdf(imgs: List[bytes], part: int) -> None:
+        title = f"{chapter.name or chapter.url}"
+        if part > 0:
+            title += f" (Part {part})"
+        pdf = images2pdf(imgs, title)
+        title = f"{chapter.name} (Part {part})" if part > 0 else chapter.name
+        replies.add(
+            text=f"{title}\n{chapter.url}",
+            filename="chapter.pdf",
+            bytefile=pdf,
+        )
+
     try:
         site = get_site(payload)
         assert site
@@ -150,12 +168,20 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
             chapter = Chapter(url=payload)
 
         try:
-            pdf = images2pdf(_get_images(site, chapter), chapter.name or chapter.url)
-            replies.add(
-                text=f"{chapter.name}\n{chapter.url}",
-                filename="chapter.pdf",
-                bytefile=pdf,
-            )
+            max_size = int(getdefault(bot, "attachment_max_size"))
+            imgs: List[bytes] = []
+            size = 0
+            part = 0
+            for img_bytes in _get_images(site, chapter):
+                size += len(img_bytes)
+                if size > max_size:
+                    part += 1
+                    send_pdf(imgs, part)
+                    imgs, size = [], 0
+                imgs.append(img_bytes)
+            if part > 0:
+                part += 1
+            send_pdf(imgs, part)
         except Exception as ex:
             bot.logger.exception(ex)
             replies.add(text=f"❌ Error: {ex}", quote=message)
