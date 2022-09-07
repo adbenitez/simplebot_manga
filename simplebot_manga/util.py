@@ -24,6 +24,7 @@ def bytes2jpeg(blob: bytes) -> BytesIO:
     try:
         img_file = BytesIO()
         img.save(img_file, format="JPEG")
+        img_file.seek(0)
         return img_file
     finally:
         img.close()
@@ -40,6 +41,7 @@ def images2pdf(images: Iterable[bytes], title: str) -> BytesIO:
         try:
             img_file = BytesIO()
             img.save(img_file, format="JPEG")
+            img_file.seek(0)
         finally:
             img.close()
 
