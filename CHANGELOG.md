@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Added support for KissManga
+
 ### Changed
 
 - made commands "hidden", now they are not shown in the bot's help
