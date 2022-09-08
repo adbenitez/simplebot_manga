@@ -68,7 +68,7 @@ def filter_messages(bot: DeltaBot, message: Message, replies: Replies) -> None:
     replies.add(text="🔍 Select a site to search", html=html, quote=message)
 
 
-@simplebot.command
+@simplebot.command(hidden=True)
 def search(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Search for mangas in the given site."""
     try:
@@ -106,7 +106,7 @@ def search(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> N
         replies.add(text="❌ Wrong usage", quote=message)
 
 
-@simplebot.command
+@simplebot.command(hidden=True)
 def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Get the info and chapters list for the given manga."""
     try:
@@ -144,7 +144,7 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
         replies.add(text="❌ Wrong usage", quote=message)
 
 
-@simplebot.command
+@simplebot.command(hidden=True)
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
     try:

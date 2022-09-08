@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- made commands "hidden", now they are not shown in the bot's help
+
 ### Fixed
 
 - Fixed "Nine Manga" downloader
