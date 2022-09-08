@@ -21,7 +21,7 @@ blobs_cache: FileSystemCache = None  # noqa
 
 @simplebot.hookimpl
 def deltabot_init(bot: DeltaBot) -> None:
-    getdefault(bot, "attachment_max_size", str(1024**2 * 15))
+    getdefault(bot, "attachment_max_size", str(1024**2 * 10))
 
 
 @simplebot.hookimpl
