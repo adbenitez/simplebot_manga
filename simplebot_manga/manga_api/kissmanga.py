@@ -39,10 +39,7 @@ class KissManga(Site):
         soup = soup("div", {"class": "chapter-list"})[1]
         for item in soup("h4"):
             item = item.findNext("a")
-            name = item["title"].strip()
-            if name.startswith(manga.name):
-                name = name[len(manga.name) :].strip()
-            yield Chapter(name=name, url=item["href"])
+            yield Chapter(name=item["title"].strip(), url=item["href"])
 
     def get_images(self, chapter: Chapter) -> Iterable[ChapterImage]:
         with self.session.get(chapter.url) as resp:
