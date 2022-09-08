@@ -16,3 +16,8 @@ To install run:
 ```
 pip install simplebot-manga
 ```
+
+
+## Credits
+
+Inspiration and some manga sites support taken from https://github.com/driverog/tg-manga-bot/
