@@ -147,19 +147,6 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 @simplebot.command
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
-
-    def send_pdf(imgs: List[bytes], part: int) -> None:
-        title = f"{chapter.name or chapter.url}"
-        if part > 0:
-            title += f" (Part {part})"
-        pdf = images2pdf(imgs, title)
-        title = f"{chapter.name} (Part {part})" if part > 0 else chapter.name
-        replies.add(
-            text=f"{title}\n{chapter.url}",
-            filename="chapter.pdf",
-            bytefile=pdf,
-        )
-
     try:
         site = get_site(payload)
         assert site
@@ -179,12 +166,12 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
                     if not imgs:
                         # add at least one image even if it is bigger than max_size
                         imgs.append(img_bytes)
-                    send_pdf(imgs, part)
+                    _send_pdf(imgs, part, chapter, replies)
                     imgs, size = [], 0
                 imgs.append(img_bytes)
             if part > 0:
                 part += 1
-            send_pdf(imgs, part)
+            _send_pdf(imgs, part, chapter, replies)
         except Exception as ex:
             bot.logger.exception(ex)
             replies.add(text=f"❌ Error: {ex}", quote=message)
@@ -218,3 +205,16 @@ def _get_chapters(site: Site, manga: Manga) -> List[Chapter]:
         for chapter in chapters:
             cache.set(chapter.url, chapter)
     return chapters
+
+
+def _send_pdf(imgs: List[bytes], part: int, chapter: Chapter, replies: Replies) -> None:
+    title = f"{chapter.name or chapter.url}"
+    if part > 0:
+        title += f" (Part {part})"
+    pdf = images2pdf(imgs, title)
+    title = f"{chapter.name} (Part {part})" if part > 0 else chapter.name
+    replies.add(
+        text=f"{title}\n{chapter.url}",
+        filename="chapter.pdf",
+        bytefile=pdf,
+    )
