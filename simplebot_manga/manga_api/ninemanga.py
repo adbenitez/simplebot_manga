@@ -81,14 +81,21 @@ class NineManga(Site):
             yield ChapterImage(url=f'{site_url}{opt["value"]}')
 
     def download_image(self, image: ChapterImage) -> bytes:
-        with self.session.get(
-            image.url, headers={"Accept-Language": "en-US,en;q=0.5"}
-        ) as resp:
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "html.parser")
-        with self.session.get(soup.find("img", class_="manga_pic")["src"]) as resp:
-            resp.raise_for_status()
-            return resp.content
+        # avoid session cookies, otherwise bad image links are returned
+        cookies = self.session.cookies.copy()
+        self.session.cookies.clear()
+
+        try:
+            with self.session.get(
+                image.url, headers={"Accept-Language": "en-US,en;q=0.5"}
+            ) as resp:
+                resp.raise_for_status()
+                soup = BeautifulSoup(resp.text, "html.parser")
+            with self.session.get(soup.find("img", class_="manga_pic")["src"]) as resp:
+                resp.raise_for_status()
+                return resp.content
+        finally:  # restore cookies
+            self.session.cookies = cookies
 
     def contains(self, url: str) -> bool:
         for lang in self.supported_languages:
