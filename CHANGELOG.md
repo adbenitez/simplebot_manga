@@ -4,7 +4,8 @@
 
 ### Added
 
-- Added support for KissManga
+- Added support for "KissManga" site
+- Added support for "Manga Tigre" site
 
 ### Changed
 

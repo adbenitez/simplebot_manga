@@ -6,6 +6,7 @@ from .asurascans import AsuraScans
 from .base import Language, Site
 from .kissmanga import KissManga
 from .manganelo import Manganelo
+from .mangatigre import MangaTigre
 from .ninemanga import NineManga
 from .tmo import TuMangaOnline
 
@@ -15,6 +16,7 @@ sites = [
     Manganelo(),
     NineManga(),
     KissManga(),
+    MangaTigre(),
 ]
 
 lang2sites: Dict[Language, List[Site]] = {}
