@@ -9,6 +9,7 @@
 ### Fixed
 
 - Fixed "Nine Manga" downloader
+- Fixed the bot's help message
 
 ## v0.1.0
 

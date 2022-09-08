@@ -51,8 +51,7 @@ def filter_messages(bot: DeltaBot, message: Message, replies: Replies) -> None:
     For example, send me a message with the text:
     Death Note
 
-    Then you will have to choose the language of the manga. Depending on the selected language,
-    you will be able to choose the website where you want to search for the manga.
+    Then I will send you a list of websites to choose where to perform your search.
     Then you can select a manga from the search results, and choose a chapter to download.
     The chapters are sorted according to the website.
     """
