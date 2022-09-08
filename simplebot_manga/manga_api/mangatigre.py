@@ -66,5 +66,5 @@ class MangaTigre(Site):
         soup = soup.find("div", {"class": "display-zone"})
         for img in soup("img"):
             yield ChapterImage(
-                url=quote(f"https:{img['data-src'] or img['src']}", safe=":/%")
+                url=quote(f"https:{img.get('data-src') or img['src']}", safe=":/%")
             )
