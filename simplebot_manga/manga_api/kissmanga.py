@@ -1,4 +1,4 @@
-"""Manganelo site downloader"""
+"""KissManga site downloader"""
 
 from typing import Iterable, Set
 
