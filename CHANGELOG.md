@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [v0.2.0]
 
 ### Added
 
@@ -22,3 +22,6 @@
 ## v0.1.0
 
 - initial release
+
+
+[v0.2.0]: https://github.com/adbenitez/simplebot_manga/compare/v0.1.0...v0.2.0
