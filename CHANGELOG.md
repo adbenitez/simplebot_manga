@@ -11,6 +11,7 @@
 ### Changed
 
 - made commands "hidden", now they are not shown in the bot's help
+- sort language sections in the site selection list
 
 ### Fixed
 
