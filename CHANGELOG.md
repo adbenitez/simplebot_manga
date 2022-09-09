@@ -7,6 +7,7 @@
 - Added support for "KissManga" site
 - Added support for "Manga Tigre" site
 - Added support for "ManhuaKO" site
+- Added support for "MangaBuddy" site
 
 ### Changed
 
