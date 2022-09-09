@@ -7,6 +7,7 @@ from .base import Language, Site
 from .kissmanga import KissManga
 from .manganelo import Manganelo
 from .mangatigre import MangaTigre
+from .manhuako import ManhuaKO
 from .ninemanga import NineManga
 from .tmo import TuMangaOnline
 
@@ -17,6 +18,7 @@ sites = [
     NineManga(),
     KissManga(),
     MangaTigre(),
+    ManhuaKO(),
 ]
 
 lang2sites: Dict[Language, List[Site]] = {}
