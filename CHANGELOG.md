@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Changed cache configuration to avoid discarding data too soon
+
 ## [v0.2.0]
 
 ### Added

@@ -32,11 +32,11 @@ def deltabot_start(bot: DeltaBot) -> None:
         os.makedirs(plugin_dir)
 
     cache_dir = os.path.join(plugin_dir, "cache")
-    cache = FileSystemCache(cache_dir, threshold=9000, default_timeout=0)
+    cache = FileSystemCache(cache_dir, threshold=0, default_timeout=60 * 60 * 24 * 60)
 
     blobs_cache_dir = os.path.join(plugin_dir, "blobs_cache")
     blobs_cache = FileSystemCache(
-        blobs_cache_dir, threshold=5000, default_timeout=60 * 60 * 24 * 7  # 7days
+        blobs_cache_dir, threshold=9000, default_timeout=60 * 60 * 24 * 7  # 7days
     )
 
 
