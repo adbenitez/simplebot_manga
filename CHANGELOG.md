@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Added support for "HeavenManga" site
+
 ### Changed
 
 - Changed cache configuration to avoid discarding data too soon
