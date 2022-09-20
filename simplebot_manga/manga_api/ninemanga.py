@@ -84,11 +84,15 @@ class NineManga(Site):
         # avoid session cookies, otherwise bad image links are returned
         cookies = self.session.cookies.copy()
         self.session.cookies.clear()
-
+        headers = {
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept": (
+                "text/html,application/xhtml+xml,application/xml;q=0.9,"
+                "image/avif,image/webp,*/*;q=0.8"
+            ),
+        }
         try:
-            with self.session.get(
-                image.url, headers={"Accept-Language": "en-US,en;q=0.5"}
-            ) as resp:
+            with self.session.get(image.url, headers=headers) as resp:
                 resp.raise_for_status()
                 soup = BeautifulSoup(resp.text, "html.parser")
             with self.session.get(soup.find("img", class_="manga_pic")["src"]) as resp:
