@@ -8,6 +8,7 @@ from urllib.parse import quote_plus
 import simplebot
 from cachelib import FileSystemCache
 from deltachat import Message
+from requests import HTTPError
 from simplebot.bot import DeltaBot, Replies
 
 from .manga_api import get_site, lang2sites
@@ -125,11 +126,15 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
             if manga.cover:
                 cover_bytes = blobs_cache.get(manga.cover)
                 if not cover_bytes:
-                    cover_bytes = site.download_cover(manga)
-                    blobs_cache.set(manga.cover, cover_bytes)
+                    try:
+                        cover_bytes = site.download_cover(manga)
+                        blobs_cache.set(manga.cover, cover_bytes)
+                    except HTTPError as ex:
+                        bot.logger.exception(ex)
 
-                args["filename"] = "cover.jpg"
-                args["bytefile"] = bytes2jpeg(cover_bytes)
+                if cover_bytes:
+                    args["filename"] = "cover.jpg"
+                    args["bytefile"] = bytes2jpeg(cover_bytes)
             replies.add(**args)
         except Exception as ex:
             bot.logger.exception(ex)

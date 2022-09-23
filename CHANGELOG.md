@@ -13,6 +13,7 @@
 ### Fixed
 
 - Fixed Spanish "Nine Manga" downloader
+- Avoid errors when downloading manga cover image
 
 ## [v0.2.0]
 
