@@ -5,6 +5,7 @@
 ### Added
 
 - Added support for "HeavenManga" site
+- Added support for `data:` image URLs
 
 ### Changed
 

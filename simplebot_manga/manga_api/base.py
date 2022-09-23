@@ -1,6 +1,7 @@
 """Base classes for manga downloaders"""
 # pylama:ignore=C0103,W0622
 
+import base64
 import functools
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -84,6 +85,8 @@ class Site(ABC):
 
     def download_image(self, image: ChapterImage) -> bytes:
         """Download a chapter image."""
+        if image.url.startswith("data:"):
+            return base64.decodebytes(image.url.split(",", maxsplit=1)[1].encode())
         with self.session.get(image.url) as resp:
             resp.raise_for_status()
             return resp.content
@@ -91,6 +94,8 @@ class Site(ABC):
     def download_cover(self, manga: Manga) -> bytes:
         """Download a manga's cover image."""
         assert manga.cover
+        if manga.cover.startswith("data:"):
+            return base64.decodebytes(manga.cover.split(",", maxsplit=1)[1].encode())
         with self.session.get(manga.cover) as resp:
             resp.raise_for_status()
             return resp.content
