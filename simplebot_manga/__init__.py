@@ -1,9 +1,10 @@
 """hooks, filters and commands"""
 
+import base64
 import os
 import time
 from io import BytesIO
-from typing import Iterable, List, Tuple
+from typing import Callable, Iterable, List, Tuple
 from urllib.parse import quote_plus
 
 import simplebot
@@ -146,8 +147,20 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 
 
 @simplebot.command(hidden=True)
+def read(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
+    """Read the given manga chapter."""
+    _download(bot, payload, message, replies, send_part=_send_html)
+
+
+@simplebot.command(hidden=True)
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
+    _download(bot, payload, message, replies, send_part=_send_pdf)
+
+
+def _download(
+    bot: DeltaBot, payload: str, message: Message, replies: Replies, send_part: Callable
+) -> None:
     try:
         site = get_site(payload)
         assert site
@@ -163,14 +176,14 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
             for img_bytes in _get_images(site, chapter):
                 if size >= max_size:
                     part += 1
-                    _send_pdf(imgs, part, chapter, replies)
+                    send_part(imgs, part, chapter, replies)
                     imgs, size = [], 0
                 img = convert_image(img_bytes)
                 size += img[0].getbuffer().nbytes
                 imgs.append(img)
             if part > 0:
                 part += 1
-            _send_pdf(imgs, part, chapter, replies)
+            send_part(imgs, part, chapter, replies)
         except Exception as ex:
             bot.logger.exception(ex)
             replies.add(text=f"❌ Error: {ex}", quote=message)
@@ -219,3 +232,21 @@ def _send_pdf(
         filename="chapter.pdf",
         bytefile=pdf,
     )
+
+
+def _send_html(
+    imgs: List[Tuple[BytesIO, int, int]], part: int, chapter: Chapter, replies: Replies
+) -> None:
+    html = (
+        '<!DOCTYPE html><html><meta charset="UTF-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        "<style>html,body{padding:0;margin:0;}img{width:100%;height:auto;}</style>"
+        "</head><body>"
+    )
+    for img_file, _, _ in imgs:
+        img = base64.b64encode(img_file.read()).decode()
+        html += f'<img src="data:image/jpeg;base64,{img}"/>'
+        img_file.close()
+    html += "</body></html>"
+    title = f"{chapter.name} (Part {part})" if part > 0 else chapter.name
+    replies.add(text=f"{title}\n{chapter.url}", html=html)

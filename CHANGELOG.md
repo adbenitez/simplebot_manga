@@ -6,6 +6,7 @@
 
 - Added support for "HeavenManga" site
 - Added support for `data:` image URLs
+- Added `/read` command to download chapter in HTML "instant view" format instead of PDF
 
 ### Changed
 
