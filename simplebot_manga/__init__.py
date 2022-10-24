@@ -104,9 +104,7 @@ def search(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> N
 
 
 @simplebot.command(hidden=True)
-def info(  # noqa
-    bot: DeltaBot, payload: str, message: Message, replies: Replies
-) -> None:
+def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Get the info and chapters list for the given manga."""
     try:
         site = get_site(payload)
