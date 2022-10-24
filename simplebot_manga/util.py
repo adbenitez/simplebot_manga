@@ -1,7 +1,7 @@
 """Utilities"""
 
 from io import BytesIO
-from typing import Iterable
+from typing import Iterable, Tuple
 
 from fpdf import FPDF
 from PIL import Image
@@ -17,34 +17,25 @@ def getdefault(bot: DeltaBot, key: str, value: str = None) -> str:
     return val
 
 
-def bytes2jpeg(blob: bytes) -> BytesIO:
-    img = Image.open(BytesIO(blob))
+def convert_image(img_bytes: bytes) -> Tuple[BytesIO, int, int]:
+    img = Image.open(BytesIO(img_bytes))
     if img.mode != "RGB":
         img = img.convert("RGB")
+    width, height = img.width, img.height
+
+    img_file = BytesIO()
     try:
-        img_file = BytesIO()
         img.save(img_file, format="JPEG")
         img_file.seek(0)
-        return img_file
     finally:
         img.close()
 
+    return img_file, width, height
 
-def images2pdf(images: Iterable[bytes], title: str) -> BytesIO:
+
+def images2pdf(images: Iterable[Tuple[BytesIO, int, int]], title: str) -> BytesIO:
     pdf = FPDF("P", "pt")
-    for img_bytes in images:
-        img = Image.open(BytesIO(img_bytes))
-        if img.mode != "RGB":
-            img = img.convert("RGB")
-        width, height = img.width, img.height
-
-        try:
-            img_file = BytesIO()
-            img.save(img_file, format="JPEG")
-            img_file.seek(0)
-        finally:
-            img.close()
-
+    for img_file, width, height in images:
         pdf.add_page(format=(width, height))
         pdf.image(img_file, 0, 0, width, height)
         img_file.close()

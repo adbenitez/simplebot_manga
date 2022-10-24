@@ -15,6 +15,7 @@
 
 - Fixed Spanish "Nine Manga" downloader
 - Avoid errors when downloading manga cover image
+- Fixed wrong calculation of parts size
 
 ## [v0.2.0]
 

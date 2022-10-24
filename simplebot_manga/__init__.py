@@ -2,7 +2,8 @@
 
 import os
 import time
-from typing import Iterable, List
+from io import BytesIO
+from typing import Iterable, List, Tuple
 from urllib.parse import quote_plus
 
 import simplebot
@@ -14,7 +15,7 @@ from simplebot.bot import DeltaBot, Replies
 from .manga_api import get_site, lang2sites
 from .manga_api.base import Chapter, Language, Manga, Site
 from .templates import get_template
-from .util import bytes2jpeg, getdefault, images2pdf
+from .util import convert_image, getdefault, images2pdf
 
 cache: FileSystemCache = None  # noqa
 blobs_cache: FileSystemCache = None  # noqa
@@ -103,7 +104,9 @@ def search(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> N
 
 
 @simplebot.command(hidden=True)
-def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
+def info(  # noqa
+    bot: DeltaBot, payload: str, message: Message, replies: Replies
+) -> None:
     """Get the info and chapters list for the given manga."""
     try:
         site = get_site(payload)
@@ -134,7 +137,7 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 
                 if cover_bytes:
                     args["filename"] = "cover.jpg"
-                    args["bytefile"] = bytes2jpeg(cover_bytes)
+                    args["bytefile"] = convert_image(cover_bytes)[0]
             replies.add(**args)
         except Exception as ex:
             bot.logger.exception(ex)
@@ -156,19 +159,17 @@ def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) ->
 
         try:
             max_size = int(getdefault(bot, "attachment_max_size"))
-            imgs: List[bytes] = []
+            imgs: List[Tuple[BytesIO, int, int]] = []
             size = 0
             part = 0
             for img_bytes in _get_images(site, chapter):
-                size += len(img_bytes)
-                if size > max_size:
+                if size >= max_size:
                     part += 1
-                    if not imgs:
-                        # add at least one image even if it is bigger than max_size
-                        imgs.append(img_bytes)
                     _send_pdf(imgs, part, chapter, replies)
                     imgs, size = [], 0
-                imgs.append(img_bytes)
+                img = convert_image(img_bytes)
+                size += img[0].getbuffer().nbytes
+                imgs.append(img)
             if part > 0:
                 part += 1
             _send_pdf(imgs, part, chapter, replies)
@@ -207,7 +208,9 @@ def _get_chapters(site: Site, manga: Manga) -> List[Chapter]:
     return chapters
 
 
-def _send_pdf(imgs: List[bytes], part: int, chapter: Chapter, replies: Replies) -> None:
+def _send_pdf(
+    imgs: List[Tuple[BytesIO, int, int]], part: int, chapter: Chapter, replies: Replies
+) -> None:
     title = f"{chapter.name or chapter.url}"
     if part > 0:
         title += f" (Part {part})"
