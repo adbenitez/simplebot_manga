@@ -42,5 +42,4 @@ def images2pdf(images: Iterable[Tuple[BytesIO, int, int]], title: str) -> BytesI
 
     pdf.set_title(title)
     output = pdf.output()
-    pdf.close()
     return BytesIO(output)
