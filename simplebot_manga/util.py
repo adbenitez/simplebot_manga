@@ -1,14 +1,14 @@
 """Utilities"""
 
 from io import BytesIO
-from typing import Iterable, Tuple
+from typing import Iterable, Optional, Tuple
 
 from fpdf import FPDF
 from PIL import Image
 from simplebot.bot import DeltaBot
 
 
-def getdefault(bot: DeltaBot, key: str, value: str = None) -> str:
+def getdefault(bot: DeltaBot, key: str, value: Optional[str] = None) -> str:
     scope = __name__.split(".", maxsplit=1)[0]
     val = bot.get(key, scope=scope)
     if val is None and value is not None:

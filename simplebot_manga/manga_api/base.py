@@ -5,7 +5,7 @@ import base64
 import functools
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Iterable, Set
+from typing import Iterable, Optional, Set
 
 from requests import Session
 
@@ -31,7 +31,7 @@ class Language(Enum):
 
 
 class Manga:
-    def __init__(self, url: str, name: str = "", cover: str = None) -> None:
+    def __init__(self, url: str, name: str = "", cover: Optional[str] = None) -> None:
         self.url = url
         self.name = name
         self.cover = cover
@@ -69,7 +69,7 @@ class Site(ABC):
         """The languages supported by this site."""
 
     @abstractmethod
-    def search(self, query: str, lang: Language = None) -> Iterable[Manga]:
+    def search(self, query: str, lang: Optional[Language] = None) -> Iterable[Manga]:
         """Search for mangas matching the given query string.
 
         :param lang: the language to search if the site supports several languages.
