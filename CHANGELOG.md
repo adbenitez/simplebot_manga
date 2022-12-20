@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [v0.3.0]
 
 ### Added
 
@@ -17,6 +17,7 @@
 - Fixed Spanish "Nine Manga" downloader
 - Avoid errors when downloading manga cover image
 - Fixed wrong calculation of parts size
+- Update usage of fpdf2 (API changed)
 
 ## [v0.2.0]
 
@@ -43,3 +44,4 @@
 
 
 [v0.2.0]: https://github.com/adbenitez/simplebot_manga/compare/v0.1.0...v0.2.0
+[v0.3.0]: https://github.com/adbenitez/simplebot_manga/compare/v0.2.0...v0.3.0
