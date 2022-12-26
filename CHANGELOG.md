@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- allow to set max-size for PDF and HTML
+
 ## [v0.3.0]
 
 ### Added
