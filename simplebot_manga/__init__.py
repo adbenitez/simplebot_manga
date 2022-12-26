@@ -150,17 +150,24 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 @simplebot.command(hidden=True)
 def read(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Read the given manga chapter."""
-    _download(bot, payload, message, replies, send_part=_send_html)
+    max_size = int(getdefault(bot, "html_max_size"))
+    _download(bot, payload, message, replies, _send_html, max_size)
 
 
 @simplebot.command(hidden=True)
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
-    _download(bot, payload, message, replies, send_part=_send_pdf)
+    max_size = int(getdefault(bot, "pdf_max_size"))
+    _download(bot, payload, message, replies, _send_pdf, max_size)
 
 
 def _download(
-    bot: DeltaBot, payload: str, message: Message, replies: Replies, send_part: Callable
+    bot: DeltaBot,
+    payload: str,
+    message: Message,
+    replies: Replies,
+    send_part: Callable,
+    max_size: int,
 ) -> None:
     try:
         site = get_site(payload)
@@ -170,7 +177,6 @@ def _download(
             chapter = Chapter(url=payload)
 
         try:
-            max_size = int(getdefault(bot, "attachment_max_size"))
             imgs: List[Tuple[BytesIO, int, int]] = []
             size = 0
             part = 0
