@@ -27,10 +27,10 @@ def deltabot_init(bot: DeltaBot) -> None:
     pdf_max_size = getdefault(bot, "pdf_max_size", str(1024**2 * 10))
     html_max_size = getdefault(bot, "html_max_size", str(1024**2 * 10))
     bot.add_preference(
-        "pdf_max_size", f"PDF maximum size in bytes (default: {pdf_max_size})"
+        "pdfMaxSize", f"PDF maximum size in bytes (default: {pdf_max_size})"
     )
     bot.add_preference(
-        "html_max_size", f"HTML-view maximum size in bytes (default: {html_max_size})"
+        "htmlMaxSize", f"HTML-view maximum size in bytes (default: {html_max_size})"
     )
 
 
