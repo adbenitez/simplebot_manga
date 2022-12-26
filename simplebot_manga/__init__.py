@@ -24,8 +24,14 @@ blobs_cache: FileSystemCache = None  # noqa
 
 @simplebot.hookimpl
 def deltabot_init(bot: DeltaBot) -> None:
-    getdefault(bot, "pdf_max_size", str(1024**2 * 10))
-    getdefault(bot, "html_max_size", str(1024**2 * 10))
+    pdf_max_size = getdefault(bot, "pdf_max_size", str(1024**2 * 10))
+    html_max_size = getdefault(bot, "html_max_size", str(1024**2 * 10))
+    bot.add_preference(
+        "pdf_max_size", f"PDF maximum size in bytes (default: {pdf_max_size})"
+    )
+    bot.add_preference(
+        "html_max_size", f"HTML-view maximum size in bytes (default: {html_max_size})"
+    )
 
 
 @simplebot.hookimpl
@@ -150,14 +156,20 @@ def info(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> Non
 @simplebot.command(hidden=True)
 def read(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Read the given manga chapter."""
-    max_size = int(getdefault(bot, "html_max_size"))
+    max_size = int(
+        bot.get("html_max_size", scope=message.get_sender_contact().addr)
+        or getdefault(bot, "html_max_size")
+    )
     _download(bot, payload, message, replies, _send_html, max_size)
 
 
 @simplebot.command(hidden=True)
 def download(bot: DeltaBot, payload: str, message: Message, replies: Replies) -> None:
     """Download the given manga chapter."""
-    max_size = int(getdefault(bot, "pdf_max_size"))
+    max_size = int(
+        bot.get("pdf_max_size", scope=message.get_sender_contact().addr)
+        or getdefault(bot, "pdf_max_size")
+    )
     _download(bot, payload, message, replies, _send_pdf, max_size)
 
 
