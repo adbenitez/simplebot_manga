@@ -248,6 +248,7 @@ def _send_pdf(
     title = f"{chapter.name} (Part {part})" if part > 0 else chapter.name
     replies.add(
         text=f"{title}\n{chapter.url}",
+        sender=title,
         filename="chapter.pdf",
         bytefile=pdf,
     )

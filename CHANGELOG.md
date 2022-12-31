@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - allow to set max-size for PDF and HTML
+- set chapter name as display name of the message to preview before downloading
 
 ## [v0.3.0]
 
