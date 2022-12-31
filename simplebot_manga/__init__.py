@@ -269,4 +269,4 @@ def _send_html(
         img_file.close()
     html += "</body></html>"
     title = f"{chapter.name} (Part {part})" if part > 0 else chapter.name
-    replies.add(text=f"{title}\n{chapter.url}", html=html)
+    replies.add(text=f"{title}\n{chapter.url}", sender=title, html=html)
