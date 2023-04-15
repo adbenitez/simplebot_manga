@@ -51,9 +51,9 @@ class MangaBuddy(Site):
             resp.raise_for_status()
             imgs = re.findall(r"var chapImages = '(.*)'", resp.text)[0].split(",")
         for img in imgs:
-            yield ChapterImage(
-                url=f"https://s1.mbcdnv1.xyz/file/img-mbuddy/manga/{img}"
-            )
+            if not img.startswith(("https://", "http://")):
+                img = f"https://s1.mbcdnv1.xyz/file/img-mbuddy/manga/{img}"
+            yield ChapterImage(url=img)
 
     def download_image(self, image: ChapterImage) -> bytes:
         with self.session.get(image.url, headers={"referer": self.url}) as resp:
