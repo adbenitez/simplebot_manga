@@ -76,7 +76,7 @@ class TuMangaOnline(Site):
 
     def download_image(self, image: ChapterImage) -> bytes:
         with self.session.get(
-            image.url, headers={"referer": image.chapter_url}  # noqa
+            image.url, headers={"referer": image.chapter_url}, verify=False  # noqa
         ) as resp:
             resp.raise_for_status()
             return resp.content
