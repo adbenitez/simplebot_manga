@@ -14,7 +14,7 @@ class WieManga(Site):
 
     @property
     def url(self) -> str:
-        return "https://wiemanga.com"
+        return "https://www.wiemanga.com"
 
     @property
     def supported_languages(self) -> Set[Language]:
