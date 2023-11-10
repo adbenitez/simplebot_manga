@@ -12,6 +12,7 @@ from .mangatigre import MangaTigre
 from .manhuako import ManhuaKO
 from .ninemanga import NineManga
 from .tmo import TuMangaOnline
+from .wiemanga import WieManga
 
 sites = [
     AsuraScans(),
@@ -23,6 +24,7 @@ sites = [
     ManhuaKO(),
     MangaBuddy(),
     HeavenManga(),
+    WieManga(),
 ]
 
 lang2sites: Dict[Language, List[Site]] = {}
