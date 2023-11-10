@@ -21,7 +21,7 @@ class WieManga(Site):
         return {Language.de}
 
     def search(self, query: str, lang: Optional[Language] = None) -> Iterable[Manga]:
-        with self.session.get(f"{self.url}/search", params={"wd": query}) as resp:
+        with self.session.get(f"{self.url}/search/", params={"wd": query}) as resp:
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
         soup = soup.find("div", {"class": "searchresult"})
