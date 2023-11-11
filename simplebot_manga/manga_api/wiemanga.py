@@ -38,7 +38,7 @@ class WieManga(Site):
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
         soup = soup.find("div", {"class": "chapterlist"})
-        for item in soup("td"):
+        for item in soup("td", {"class": "col1"}):
             item = item.a
             yield Chapter(name=item["title"].strip(), url=item["href"])
 
