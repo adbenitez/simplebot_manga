@@ -21,7 +21,7 @@ class TuMangaOnline(Site):
 
     @property
     def url(self) -> str:
-        return "https://lectortmo.com"
+        return "https://visortmo.com"
 
     @property
     def supported_languages(self) -> Set[Language]:
@@ -80,3 +80,6 @@ class TuMangaOnline(Site):
         ) as resp:
             resp.raise_for_status()
             return resp.content
+
+    def contains(self, url: str) -> bool:
+        return url.startswith((self.url + "/", "https://lectortmo.com/"))
